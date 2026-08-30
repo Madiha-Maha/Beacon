@@ -1,0 +1,14 @@
+node_modules
+.pnpm-store
+*.log
+.env
+.env.local
+.env.development
+.env.production
+.DS_Store
+dist
+.next
+.vercel
+coverage
+*.tsbuildinfo
+prisma/migrations/**/_*.sql.tmp

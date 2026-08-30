@@ -1,0 +1,23 @@
+{
+  "name": "beacon",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Beacon — Real-Time AI Sight Companion",
+  "scripts": {
+    "dev": "node scripts/run-dev.js",
+    "dev:install": "node scripts/ensure-deps.js",
+    "dev:api": "pnpm --filter api dev",
+    "dev:web": "pnpm --filter web dev",
+    "build": "pnpm --filter shared build && pnpm --filter api build && pnpm --filter web build",
+    "lint": "pnpm --filter api lint && pnpm --filter web lint",
+    "typecheck": "pnpm --filter api typecheck && pnpm --filter web typecheck"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "@types/node": "^20.12.7",
+    "zod": "^3.22.4"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

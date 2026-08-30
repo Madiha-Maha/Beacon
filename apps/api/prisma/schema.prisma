@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String           @id @default(cuid())
+  email        String           @unique
+  passwordHash String
+  createdAt    DateTime         @default(now())
+  lastLoginAt  DateTime?
+  hazardReports HazardReport[]
+  caregiverLinks CaregiverLink[] @relation("UserLinks")
+  narrationLogs NarrationLog[]
+}
+
+model HazardReport {
+  id          String   @id @default(cuid())
+  reporterId  String?
+  reporter    User?    @relation(fields: [reporterId], references: [id], onDelete: SetNull)
+  lat         Float
+  lng         Float
+  type        String
+  severity    String
+  notes       String?
+  reportedAt  DateTime @default(now())
+  expiresAt   DateTime
+
+  @@index([lat, lng])
+  @@index([expiresAt])
+}
+
+model CaregiverLink {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation("UserLinks", fields: [userId], references: [id], onDelete: Cascade)
+  caregiverEmail  String
+  status          String   @default("pending")
+  consentGranted  Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  grantedAt       DateTime?
+
+  @@unique([userId, caregiverEmail])
+}
+
+model NarrationLog {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tier         String
+  text         String
+  createdAt    DateTime @default(now())
+  lat          Float?
+  lng          Float?
+
+  @@index([userId, createdAt])
+}

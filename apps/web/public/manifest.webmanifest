@@ -1,0 +1,52 @@
+{
+  "name": "Beacon — Real-Time AI Sight Companion",
+  "short_name": "Beacon",
+  "description": "Always-listening, audio-first AI companion that narrates your surroundings in real-time with hazard-first triage.",
+  "start_url": "/live?utm_source=pwa&utm_medium=homescreen",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0B0E11",
+  "theme_color": "#0B0E11",
+  "categories": ["accessibility", "lifestyle", "navigation", "health"],
+  "lang": "en-US",
+  "dir": "ltr",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Start Listening",
+      "short_name": "Listen",
+      "description": "Open Beacon's live narration view",
+      "url": "/live",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Hazard Map",
+      "short_name": "Map",
+      "description": "View the Community Hazard Mesh",
+      "url": "/hazard-map",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Settings",
+      "short_name": "Settings",
+      "description": "Voice, haptics, contrast",
+      "url": "/settings",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
