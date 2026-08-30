@@ -1,4 +1,14 @@
 /** @type {import('next').NextConfig} */
+function isValidHttpUrl(value) {
+  if (!value || typeof value !== "string") return false;
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
@@ -48,11 +58,11 @@ const nextConfig = {
   },
   rewrites: async () => {
     const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL;
-    if (!apiBase) return [];
+    if (!isValidHttpUrl(apiBase)) return [];
     return [
       {
         source: "/api-proxy/:path*",
-        destination: `${apiBase}/:path*`,
+        destination: `${apiBase.replace(/\/$/, "")}/:path*`,
       },
     ];
   },
