@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { prisma } from "../index";
+import { getPrisma } from "../index";
 import {
   AuthenticatedRequest,
   attachUser,
@@ -29,8 +29,9 @@ function haversineDistanceKm(
 
 hazardsRoutes.post("/", attachUser, async (req: AuthenticatedRequest, res, next) => {
   try {
+    const db = getPrisma();
     const body = schemas.HazardReportInputSchema.parse(req.body);
-    const record = await prisma.hazardReport.create({
+    const record = await db.hazardReport.create({
       data: {
         lat: body.lat,
         lng: body.lng,
@@ -49,6 +50,7 @@ hazardsRoutes.post("/", attachUser, async (req: AuthenticatedRequest, res, next)
 
 hazardsRoutes.get("/", async (req, res, next) => {
   try {
+    const db = getPrisma();
     const query = schemas.NearbyHazardsQuerySchema.parse(req.query);
     const latRange = query.radiusKm / 111;
     const lngRange =
@@ -65,7 +67,7 @@ hazardsRoutes.get("/", async (req, res, next) => {
       reportedAt: Date;
       expiresAt: Date;
       reporterId: string | null;
-    }> = await prisma.hazardReport.findMany({
+    }> = await db.hazardReport.findMany({
       where: {
         lat: { gte: query.lat - latRange, lte: query.lat + latRange },
         lng: { gte: query.lng - lngRange, lte: query.lng + lngRange },

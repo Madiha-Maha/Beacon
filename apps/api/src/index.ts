@@ -113,5 +113,14 @@ bootstrap().catch((err) => {
   process.exit(1);
 });
 
+export function getPrisma(): PrismaClient {
+  if (!prisma) {
+    throw new Error(
+      "Prisma client is unavailable. Ensure DATABASE_URL is set and `prisma generate` has run."
+    );
+  }
+  return prisma;
+}
+
 export { prisma };
 

@@ -4,12 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "prisma generate --schema=./prisma/schema.prisma && tsc -p tsconfig.json",
+    "build": "node ../../scripts/prisma-generate.js && tsc -p tsconfig.json",
     "start": "node dist/index.js",
     "lint": "tsc --noEmit -p tsconfig.json",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "postinstall": "prisma generate --schema=./prisma/schema.prisma",
-    "prisma:generate": "prisma generate --schema=./prisma/schema.prisma",
+    "postinstall": "node ../../scripts/prisma-generate.js",
+    "prisma:generate": "node ../../scripts/prisma-generate.js",
     "prisma:migrate": "prisma migrate deploy",
     "prisma:studio": "prisma studio"
   },

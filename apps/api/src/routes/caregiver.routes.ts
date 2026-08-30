@@ -1,6 +1,6 @@
 import { Router } from "express";
 import crypto from "crypto";
-import { prisma } from "../index";
+import { getPrisma } from "../index";
 import {
   AuthenticatedRequest,
   requireAuth,
@@ -15,9 +15,10 @@ caregiverRoutes.post(
   requireAuth,
   async (req: AuthenticatedRequest, res, next) => {
     try {
+      const db = getPrisma();
       const body = schemas.CaregiverLinkInputSchema.parse(req.body);
       const userId = req.user!.id;
-      const existing = await prisma.caregiverLink.findUnique({
+      const existing = await db.caregiverLink.findUnique({
         where: {
           userId_caregiverEmail: {
             userId,
@@ -28,7 +29,7 @@ caregiverRoutes.post(
       if (existing && existing.status !== "revoked") {
         return res.status(200).json({ link: existing });
       }
-      const link = await prisma.caregiverLink.create({
+      const link = await db.caregiverLink.create({
         data: {
           userId,
           caregiverEmail: body.caregiverEmail.toLowerCase(),
@@ -48,14 +49,15 @@ caregiverRoutes.post(
   requireAuth,
   async (req: AuthenticatedRequest, res, next) => {
     try {
+      const db = getPrisma();
       const { linkId } = req.params;
-      const link = await prisma.caregiverLink.findUnique({
+      const link = await db.caregiverLink.findUnique({
         where: { id: linkId },
       });
       if (!link || link.userId !== req.user!.id) {
         throw new HttpError(404, "Link not found");
       }
-      const updated = await prisma.caregiverLink.update({
+      const updated = await db.caregiverLink.update({
         where: { id: linkId },
         data: { status: "active", consentGranted: true, grantedAt: new Date() },
       });
@@ -71,14 +73,15 @@ caregiverRoutes.post(
   requireAuth,
   async (req: AuthenticatedRequest, res, next) => {
     try {
+      const db = getPrisma();
       const { linkId } = req.params;
-      const link = await prisma.caregiverLink.findUnique({
+      const link = await db.caregiverLink.findUnique({
         where: { id: linkId },
       });
       if (!link || link.userId !== req.user!.id) {
         throw new HttpError(404, "Link not found");
       }
-      const updated = await prisma.caregiverLink.update({
+      const updated = await db.caregiverLink.update({
         where: { id: linkId },
         data: { status: "revoked", consentGranted: false },
       });
@@ -95,8 +98,9 @@ caregiverRoutes.get(
   "/:linkId/transcript",
   async (req: AuthenticatedRequest, res, next) => {
     try {
+      const db = getPrisma();
       const { linkId } = req.params;
-      const link = await prisma.caregiverLink.findUnique({
+      const link = await db.caregiverLink.findUnique({
         where: { id: linkId },
       });
       if (!link) {
@@ -141,7 +145,7 @@ caregiverRoutes.get(
         createdAt: Date;
         lat: number | null;
         lng: number | null;
-      }> = await prisma.narrationLog.findMany({
+      }> = await db.narrationLog.findMany({
         where: { userId: link.userId },
         orderBy: { createdAt: "desc" },
         take: 200,
@@ -180,7 +184,8 @@ caregiverRoutes.get(
   "/links",
   requireAuth,
   async (req: AuthenticatedRequest, res) => {
-    const links = await prisma.caregiverLink.findMany({
+    const db = getPrisma();
+    const links = await db.caregiverLink.findMany({
       where: { userId: req.user!.id },
       orderBy: { createdAt: "desc" },
     });

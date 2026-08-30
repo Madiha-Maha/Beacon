@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { prisma } from "../index";
+import { getPrisma } from "../index";
 
 export interface AuthenticatedRequest extends Request {
   user?: {
@@ -48,7 +48,8 @@ export async function attachUser(
     const token = authHeader.slice("Bearer ".length);
     try {
       const decoded = jwt.verify(token, JWT_SECRET) as { sub: string; email: string };
-      const user = await prisma.user.findUnique({
+      const db = getPrisma();
+      const user = await db.user.findUnique({
         where: { id: decoded.sub },
         select: { id: true, email: true },
       });
