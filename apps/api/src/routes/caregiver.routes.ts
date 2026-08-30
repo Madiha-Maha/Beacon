@@ -8,7 +8,7 @@ import {
 import { HttpError } from "../middleware/error.middleware";
 import { schemas } from "@beacon/shared/schemas";
 
-export const caregiverRoutes = Router();
+export const caregiverRoutes: Router = Router();
 
 caregiverRoutes.post(
   "/link",
@@ -112,8 +112,6 @@ caregiverRoutes.get(
 
       if (authHeader && authHeader.startsWith("Bearer ")) {
         try {
-          const { signAccessToken } = await import("../middleware/auth.middleware");
-          void signAccessToken;
           const jwt = await import("jsonwebtoken");
           const JWT_SECRET = process.env.JWT_SECRET ?? "dev-secret-change-me";
           const decoded = jwt.verify(
@@ -136,7 +134,14 @@ caregiverRoutes.get(
         }
       }
 
-      const logs = await prisma.narrationLog.findMany({
+      const logs: Array<{
+        id: string;
+        tier: string;
+        text: string;
+        createdAt: Date;
+        lat: number | null;
+        lng: number | null;
+      }> = await prisma.narrationLog.findMany({
         where: { userId: link.userId },
         orderBy: { createdAt: "desc" },
         take: 200,
@@ -156,13 +161,13 @@ caregiverRoutes.get(
           .createHash("sha256")
           .update(link.id + link.createdAt.toISOString())
           .digest("hex"),
-        entries: logs.map((l) => ({
-          id: l.id,
-          tier: l.tier,
-          text: l.text,
-          at: l.createdAt,
+        entries: logs.map((log) => ({
+          id: log.id,
+          tier: log.tier,
+          text: log.text,
+          at: log.createdAt,
           geolocation:
-            l.lat != null && l.lng != null ? { lat: l.lat, lng: l.lng } : null,
+            log.lat != null && log.lng != null ? { lat: log.lat, lng: log.lng } : null,
         })),
       });
     } catch (err) {

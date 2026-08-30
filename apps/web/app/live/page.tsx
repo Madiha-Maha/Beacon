@@ -6,6 +6,7 @@ import clsx from "clsx";
 import type { TriageOutput } from "@beacon/shared/types";
 import ListeningIndicator from "@/components/ListeningIndicator";
 import NarrationStreamHandler from "@/components/NarrationStreamHandler";
+import { beaconApi } from "@/lib/api-client";
 import { useAppStore } from "@/lib/store";
 
 interface NarrationEntry extends TriageOutput {
@@ -60,7 +61,6 @@ export default function LivePage() {
       });
     });
 
-    const { beaconApi } = await import("@/lib/api-client");
     try {
       await beaconApi.reportHazard({
         lat: pos.coords.latitude,

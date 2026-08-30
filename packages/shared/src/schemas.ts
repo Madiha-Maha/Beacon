@@ -84,3 +84,19 @@ export const SocketFramePayloadSchema = z.object({
     })
     .optional(),
 });
+
+export const schemas = {
+  NarrationTierSchema,
+  HapticPatternSchema,
+  TriageOutputSchema,
+  TriageInputSchema,
+  HazardTypeSchema,
+  HazardSeveritySchema,
+  HazardReportInputSchema,
+  NearbyHazardsQuerySchema,
+  CaregiverLinkStatusSchema,
+  CaregiverLinkInputSchema,
+  RegisterSchema,
+  LoginSchema,
+  SocketFramePayloadSchema,
+};

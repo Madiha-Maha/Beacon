@@ -7,7 +7,7 @@ import {
 import { schemas } from "@beacon/shared/schemas";
 import { HazardReportRecord } from "@beacon/shared/types";
 
-export const hazardsRoutes = Router();
+export const hazardsRoutes: Router = Router();
 
 const DEFAULT_EXPIRY_HOURS = 72;
 
@@ -55,7 +55,17 @@ hazardsRoutes.get("/", async (req, res, next) => {
       query.radiusKm / (111 * Math.cos((query.lat * Math.PI) / 180));
     const now = new Date();
 
-    const candidates = await prisma.hazardReport.findMany({
+    const candidates: Array<{
+      id: string;
+      lat: number;
+      lng: number;
+      type: string;
+      severity: string;
+      notes: string | null;
+      reportedAt: Date;
+      expiresAt: Date;
+      reporterId: string | null;
+    }> = await prisma.hazardReport.findMany({
       where: {
         lat: { gte: query.lat - latRange, lte: query.lat + latRange },
         lng: { gte: query.lng - lngRange, lte: query.lng + lngRange },
@@ -65,23 +75,21 @@ hazardsRoutes.get("/", async (req, res, next) => {
       take: 200,
     });
 
-    const filtered: HazardReportRecord[] = candidates
-      .map((r) => ({
-        id: r.id,
-        lat: r.lat,
-        lng: r.lng,
-        type: r.type as HazardReportRecord["type"],
-        severity: r.severity as HazardReportRecord["severity"],
-        notes: r.notes ?? undefined,
-        reportedAt: r.reportedAt,
-        expiresAt: r.expiresAt,
-        reporterId: r.reporterId,
-        distanceKm: haversineDistanceKm(query.lat, query.lng, r.lat, r.lng),
+    const filtered: Array<HazardReportRecord & { distanceKm: number }> = candidates
+      .map((report) => ({
+        id: report.id,
+        lat: report.lat,
+        lng: report.lng,
+        type: report.type as HazardReportRecord["type"],
+        severity: report.severity as HazardReportRecord["severity"],
+        notes: report.notes ?? undefined,
+        reportedAt: report.reportedAt,
+        expiresAt: report.expiresAt,
+        reporterId: report.reporterId,
+        distanceKm: haversineDistanceKm(query.lat, query.lng, report.lat, report.lng),
       }))
-      .filter((r: any) => r.distanceKm <= query.radiusKm)
-      .sort(
-        (a: any, b: any) => (a.distanceKm as number) - (b.distanceKm as number)
-      ) as any;
+      .filter((report) => report.distanceKm <= query.radiusKm)
+      .sort((a, b) => a.distanceKm - b.distanceKm);
 
     return res.status(200).json({
       count: filtered.length,

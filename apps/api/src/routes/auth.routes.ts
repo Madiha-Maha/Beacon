@@ -9,7 +9,7 @@ import {
 import { HttpError } from "../middleware/error.middleware";
 import { schemas } from "@beacon/shared/schemas";
 
-export const authRoutes = Router();
+export const authRoutes: Router = Router();
 
 authRoutes.post("/register", async (req, res, next) => {
   try {

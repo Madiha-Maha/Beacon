@@ -2,6 +2,7 @@ import { config as loadDotenv } from "dotenv";
 import express from "express";
 import http from "http";
 import cors from "cors";
+import { PrismaClient } from "@prisma/client";
 import { Server as SocketIOServer } from "socket.io";
 import { errorMiddleware } from "./middleware/error.middleware";
 import { authRoutes } from "./routes/auth.routes";
@@ -9,24 +10,22 @@ import { hazardsRoutes } from "./routes/hazards.routes";
 import { caregiverRoutes } from "./routes/caregiver.routes";
 import { registerNarrationSocket } from "./sockets/narration.socket";
 
-loadDotenv({ silent: true });
+loadDotenv();
 
-let prisma: any = null;
+let prisma: PrismaClient | null = null;
 
-function safeCreatePrisma(): any {
+function safeCreatePrisma(): PrismaClient | null {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const { PrismaClient } = require("@prisma/client");
-    const client = new PrismaClient({
+    return new PrismaClient({
       errorFormat: "minimal",
       log: [],
     });
-    return client;
-  } catch (e: any) {
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : String(e);
     console.warn(
       "[beacon-api] @prisma/client unavailable (did you run `prisma generate`?).",
       "Auth/hazards/caregiver routes will be disabled until Prisma is configured.",
-      e?.message ?? ""
+      message
     );
     return null;
   }
