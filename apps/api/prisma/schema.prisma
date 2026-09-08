@@ -1,0 +1,64 @@
+// Beacon Sight Companion — Prisma Database Schema
+// PostgreSQL Target for Railway
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String          @id @default(uuid())
+  email          String          @unique
+  passwordHash   String
+  name           String
+  role           String          @default("user") // "user" | "caregiver"
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  caregiverLinks CaregiverLink[]
+  narrationLogs  NarrationLog[]
+  hazardReports  HazardReport[]
+}
+
+model HazardReport {
+  id            String    @id @default(uuid())
+  lat           Float
+  lng           Float
+  type          String    // "stairs_down" | "stairs_up" | "curb" | "vehicle" | "construction" | "broken_pavement" | "wet_floor" | "blocked_ramp" | "general_obstacle"
+  title         String
+  description   String
+  severity      String    @default("warning") // "critical" | "warning" | "advisory"
+  verifiedCount Int       @default(1)
+  reportedAt    DateTime  @default(now())
+  expiresAt     DateTime
+  userId        String?
+  user          User?     @relation(fields: [userId], references: [id])
+
+  @@index([lat, lng])
+}
+
+model CaregiverLink {
+  id             String    @id @default(uuid())
+  userId         String
+  user           User      @relation(fields: [userId], references: [id])
+  caregiverEmail String
+  token          String    @unique
+  consentGranted Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  lastActiveAt   DateTime?
+}
+
+model NarrationLog {
+  id            String    @id @default(uuid())
+  userId        String?
+  user          User?     @relation(fields: [userId], references: [id])
+  tier          String    // "hazard" | "social" | "ambient"
+  text          String
+  hapticPattern String?   // "hazard-near" | "hazard-approaching" | "social-cue"
+  lat           Float?
+  lng           Float?
+  timestamp     DateTime  @default(now())
+}

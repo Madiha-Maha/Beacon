@@ -1,0 +1,26 @@
+{
+  "id": "/",
+  "name": "Beacon — Real-Time AI Sight Companion",
+  "short_name": "Beacon",
+  "description": "Real-time, audio-first AI vision companion for blind and low-vision users with priority-tiered narration, community hazard mesh, and caregiver mirror mode.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0B0E11",
+  "theme_color": "#0B0E11",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

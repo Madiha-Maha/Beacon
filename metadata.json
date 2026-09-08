@@ -1,0 +1,6 @@
+{
+  "name": "Beacon — Real-Time AI Sight Companion",
+  "description": "Real-time, audio-first AI vision companion for blind and low-vision users with priority-tiered narration, community hazard mesh, and caregiver mirror mode.",
+  "requestFramePermissions": ["camera", "microphone", "geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
